@@ -1,14 +1,15 @@
 from PyQt5 import uic
-from PyQt5.QtGui import QPainter, QColor, QBrush
+from PyQt5.QtGui import QPainter, QColor
 from PyQt5.QtWidgets import QWidget, QApplication
-import random
+from random import randint
 import sys
+from UI import Ui_Form
 
 
-class Form(QWidget):
+class Form(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
-        uic.loadUi('UI.ui', self)
+        self.setupUi(self)
         self.pushButton.clicked.connect(self.paint)
         self.do_paint = False
 
@@ -16,7 +17,7 @@ class Form(QWidget):
         if self.do_paint:
             qp = QPainter()
             qp.begin(self)
-            self.draw_circle(qp)
+            self.draw_circles(qp)
             qp.end()
         self.do_paint = False
 
@@ -24,12 +25,17 @@ class Form(QWidget):
         self.do_paint = True
         self.update()
 
-    def draw_circle(self, qp):
-        diameter = random.randint(100, 200)
-        qp.setBrush(QColor(255, 255, 0))
+    def draw_circles(self, qp):
+        r, g, b = randint(0, 255), randint(0, 255), randint(0, 255)
+        qp.setBrush(QColor(r, g, b))
+
+        diameter = randint(100, 200)
         qp.drawEllipse(150 - diameter // 2, 230 - diameter // 2, diameter, diameter)
 
-        diameter2 = random.randint(100, 200)
+        r, g, b = randint(0, 255), randint(0, 255), randint(0, 255)
+        qp.setBrush(QColor(r, g, b))
+
+        diameter2 = randint(100, 200)
         qp.drawEllipse(450 - diameter2 // 2, 230 - diameter2 // 2, diameter2, diameter2)
 
 
