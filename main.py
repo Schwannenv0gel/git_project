@@ -1,46 +1,29 @@
-from PyQt5 import uic
-from PyQt5.QtGui import QPainter, QColor
-from PyQt5.QtWidgets import QWidget, QApplication
-from random import randint
 import sys
-from UI import Ui_Form
+from PyQt5 import uic
+from PyQt5.QtSql import QSqlDatabase, QSqlTableModel
+from PyQt5.QtWidgets import QWidget, QTableView, QApplication
 
-
-class Form(QWidget, Ui_Form):
+class Coff(QWidget):
     def __init__(self):
         super().__init__()
-        self.setupUi(self)
-        self.pushButton.clicked.connect(self.paint)
-        self.do_paint = False
+        uic.loadUi('main.ui', self)
 
-    def paintEvent(self, event):
-        if self.do_paint:
-            qp = QPainter()
-            qp.begin(self)
-            self.draw_circles(qp)
-            qp.end()
-        self.do_paint = False
+        db = QSqlDatabase.addDatabase('QSQLITE')
+        db.setDatabaseName('coffee.sqlite')
+        db.open()
 
-    def paint(self):
-        self.do_paint = True
-        self.update()
+        view = QTableView(self)
+        model = QSqlTableModel(self, db)
+        model.setTable('coffe_table')
+        model.select()
 
-    def draw_circles(self, qp):
-        r, g, b = randint(0, 255), randint(0, 255), randint(0, 255)
-        qp.setBrush(QColor(r, g, b))
-
-        diameter = randint(100, 200)
-        qp.drawEllipse(150 - diameter // 2, 230 - diameter // 2, diameter, diameter)
-
-        r, g, b = randint(0, 255), randint(0, 255), randint(0, 255)
-        qp.setBrush(QColor(r, g, b))
-
-        diameter2 = randint(100, 200)
-        qp.drawEllipse(450 - diameter2 // 2, 230 - diameter2 // 2, diameter2, diameter2)
+        view.setModel(model)
+        view.move(10, 10)
+        view.resize(630, 430)
 
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    f = Form()
-    f.show()
+    c = Coff()
+    c.show()
     sys.exit(app.exec_())
